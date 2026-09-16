@@ -18,9 +18,12 @@
 
 - Dockerfiles con **multi-stage + BuildKit** (`RUN --mount`): node_modules en
   bind, no en capas → imágenes livianas.
-- **Secreto `VERDACCIO_TOKEN`**: algunas dependencias vienen de
-  `packages.ever.co` (registro privado de Ever). Sin token → el build puede
-  fallar al resolver esos paquetes. Es el riesgo #1 del rework.
+- **`VERDACCIO_TOKEN` es OPCIONAL** (verificado en `.deploy/api/Dockerfile`
+  líneas 120-145): el registro privado `packages.ever.co` **solo se usa si** se
+  pasan `VERDACCIO_REGISTRY` o `VERDACCIO_TOKEN`. Sin ellos → instala del
+  registro **público** (`registry.yarnpkg.com`, el `.npmrc` del repo ya lo fija).
+  El `yarn.lock` tiene **0** referencias a `packages.ever.co`. → **El build del
+  fork NO requiere token privado.** (Riesgo #1 descartado.)
 - `NX_NO_CLOUD=true` deja Nx Cloud inerte; el build corre local.
 - Apps a construir: API (`apps/api`), Webapp (`apps/gauzy`, nginx), y opcional
   desktop/agent/mcp.
@@ -53,10 +56,11 @@
 
 | Riesgo | Mitigación |
 |---|---|
-| Sin `VERDACCIO_TOKEN` no build | Probar build local; si falla, ver qué package falta y decidir (sustituir por versión pública o pedir acceso). Documentar hallazgo. |
+| ~~Sin `VERDACCIO_TOKEN` no build~~ | **Descartado**: sin token usa el registro público (ver §2). |
 | Fork queda atrás de upstream | Flujo `estacion` + `git fetch upstream && git merge` programado; PRs propios. |
-| Imágenes originales eternas en compose | Ramificar compose propio (`docker-compose.own.yml`) con GHCR tuyo. |
+| Imágenes originales eternas en compose | Compose propio `docker-compose.own.yml` (ya creado) apuntando a GHCR tuyo. |
 | Secrets en ambiente | `.env` nunca al repo; `GITHUB_TOKEN` con permiso `packages:write` (scoped). |
+| Build lento en PC (RAM/CPU) | Preferir Actions→GHCR; build local solo para validar cambios puntuales. |
 
 ## 5. Próximo paso concreto (para CUANDO Samuel valide la demo)
 
@@ -69,3 +73,27 @@
 
 > No ejecutar aún: pendiente de exploración/validación de Samuel (está viendo
 > la UI). Este doc queda como el plan de ejecución.
+
+## 6. Preparación ya hecha (16-sep, rama `estacion` del fork)
+
+- Rama **`estacion`** creada y pusheada a `origin`
+  (`SamuelEcheverriUribe/ever-gauzy`). Se creó desde `develop`.
+  - No dispara ningún workflow automático (los `push:` del repo están limitados
+    a otras ramas: develop, stage, droplets, apps…), verificado.
+- **`.github/workflows/build-own.yml`**: build propio de API + Webapp →
+  `ghcr.io/SamuelEcheverriUribe/gauzy-{api,webapp}`. **Solo manual**
+  (`workflow_dispatch`) con input `demo` y `publish`, más caché `type=gha`.
+  Sin secretos privados (usa registro público, ver §2).
+- **`docker-compose.own.yml`**: copia del demo apuntando a las imágenes del
+  fork (GHCR de Samuel), no a las de ever-co.
+- Validado: YAML OK; el compose referencia `ghcr.io/SamuelEcheverriUribe/...`.
+
+### Cómo se usará (cuando se decida)
+```
+# 1) GitHub → Actions → "Build imágenes propias (estación)" → Run workflow
+# 2) traer y levantar:
+sudo docker compose -f ~/Proyectos/ever-gauzy/docker-compose.own.yml pull
+sudo docker compose -f ~/Proyectos/ever-gauzy/docker-compose.own.yml up -d
+```
+> Al ser imágenes del fork, se puede modificar el código (p. ej. vista
+> "Estación freelance") y reconstruir con el botón, sin tocar el upstream.

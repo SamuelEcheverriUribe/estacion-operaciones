@@ -70,3 +70,14 @@
 > Skills del lado gauzy: 148 módulos; los que importan primero:
 > organization-contact, pipeline, proposal, candidate, email-history, tasks,
 > goals. El resto se desactiva (feature toggle) para no abrumar la UI.
+
+## 5. Bridge implementado (v0.1)
+
+- **`~/.local/bin/gauzy-sync`** ya traduce la fuente local:
+  - `contactos.json` → `organization-contact` (conecty=CLIENT, imerit=LEAD,
+    viable-medical=CUSTOMER archivado en notes).
+  - `estado.json` → resumen de stages (informativo en v0.1).
+  - Dry-run por defecto; `--apply` escribe vía API (idempotente por `name`).
+- Verificado: dry-run local OK (3 contactos + conteo de stages).
+- Pendiente al pasar a tenant propio: crear los `Pipeline`/`stages` reales
+  (Cola/Enviada/Respondida/Descartada) y asociar cada vacante.

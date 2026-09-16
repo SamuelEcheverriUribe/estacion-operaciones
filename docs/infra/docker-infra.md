@@ -1,7 +1,7 @@
 # Infra: Contenedores (Docker) — plan de despliegue gauzy
 
-> Estado: Docker aún NO instalado (autorizado por Samuel con sudo, 16-sep).
-> Este doc define cómo será el flujo; se ejecuta en F2.
+> Estado: IMPLEMENTADO (16-sep) — Docker instalado y demo gauzy corriendo.
+> Definición del flujo + resultado real (ver §7-§8).
 
 ## 1. Por qué contenedores aquí
 
@@ -83,3 +83,32 @@ docker exec -it <contenedor> sh            # terminal dentro de un contenedor
   (ver §6; `docker` directo tras re-login).
 
 > Próximo (F3): entrar por la UI, crear un tenant, y mapear contactos/props.
+
+## 8. API real — contrato aprendido (16-sep)
+
+### 8.1 Autenticación (idéntica para móvil / scripts)
+1. `POST /auth/login` `{email, password}` → responde `token` (JWT) y
+   `user.tenantId`.
+2. Toda petición posterior: `Authorization: Bearer <token>` **+** header
+   `Tenant-Id: <tenantId>` (sin él → 403 multi-tenant).
+3. `GET /user/me` devuelve el perfil (rol SUPER_ADMIN en demo).
+
+### 8.2 Esquema `organization-contact` (clientes/leads)
+- Campos de creación (DTO): `organizationId` (UUID, obligatorio),
+  `name`, `primaryEmail`, `primaryPhone`, `contactType`, `notes`, `budget`,
+  `budgetType`, `imageId`.
+- `contactType` ∈ `CLIENT | CUSTOMER | LEAD`.
+- `GET /organization-contact` sin `where` **sí** funciona (devuelve 146 demo);
+  otras rutas (`/organization`, `/employee`) exigen `where` no vacío.
+
+### 8.3 Rate-limit (importante para automatizar)
+- El **login está throttleado**: varias llamadas seguidas → `HTTP 429`.
+  Mitigación: cachear el token (`/tmp/opencode/gauzy_token`) y reintentar con
+  backoff; no loguearse por cada operación. (Implementado en `gauzy-sync`.)
+
+### 8.4 Bridge construido
+- **`~/.local/bin/gauzy-sync`** (Python, +x): traduce `contactos.json` y
+  `estado.json` a entidades gauzy. Dry-run por defecto (sin red) y
+  `--apply` (idempotente por `name`). Mapeo en `docs/flujos/mapeo-gauzy.md`.
+- **`~/.local/bin/gauzy-cli`** (Python, +x): cliente mínimo (`ping`, `login`,
+  `contacts`) — mismo contrato que consumirá la app móvil.
