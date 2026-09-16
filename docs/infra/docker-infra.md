@@ -66,3 +66,20 @@ docker exec -it <contenedor> sh            # terminal dentro de un contenedor
    (admin@ever.co / admin).
 4. Ejercicio de aprendizaje: mapear puertos, subir bajada, volúmenes.
 5. Documentar aquí el resultado real (restricciones, puertos, comandos útiles).
+
+## 7. Resultado real (16-sep-2026, implementado)
+
+- Docker Engine 29.8.1 + Compose v5.5.1 instalados (dnf, repos oficiales) en
+  Fedora. `bark` en grupo `docker` (efectivo en próxima sesión; mientras se usa
+  sudo con clave de sesión diaria, autorización de Samuel 16-sep).
+- Repo gauzy clonado shallow en `~/Proyectos/ever-gauzy`.
+- `docker compose -f docker-compose.demo.yml up -d` → 3 contenedores:
+  - `db` postgres:17-alpine (healthy) → 5432, volumen `ever-gauzy_postgres_data`
+  - `api` ghcr.io/ever-co/gauzy-api → 3000/api (HTTP 200)
+  - `webapp` ghcr.io/ever-co/gauzy-webapp (nginx) → 4200 (HTTP 200)
+- **Login demo**: http://localhost:4200 — admin@ever.co / admin.
+- Red `ever-gauzy_overlay` (bridge) interna; puertos mapeados al host.
+- Comandos propios: `sudo docker compose -f docker-compose.demo.yml ps/logs/down`
+  (ver §6; `docker` directo tras re-login).
+
+> Próximo (F3): entrar por la UI, crear un tenant, y mapear contactos/props.
