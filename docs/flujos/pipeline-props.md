@@ -77,3 +77,18 @@ con firma. Adjunta `CV_Samuel_DataEntry_EN.pdf`.
 | estado.json | estado `proposal` (cola/enviada/respondida) |
 | contactos-vacantes.json | relación propuesta→contact |
 | informes | `email-history` |
+
+## 9. Verificado en API gauzy (16-sep, demo)
+
+- Auth: `POST /api/auth/login {email,password}` → `token` (JWT) + `user.tenantId`.
+  Toda petición lleva `Authorization: Bearer <token>` + header **`Tenant-Id`**
+  (multi-tenant; sin él → 403).
+- `/api/organization-contact` (200, `?where={}`): items con `id`, `name`,
+  `contactType` (LEAD / CLIENT / CUSTOMER), `organizationId`. La demo trae 146
+  contactos semilla → perfecto para probar el mapeo.
+- `/api/contact` (200) y `/api/employee` (quiere `where`): rutas vivas.
+- Swagger (`/api/docs`) deshabilitado en demo prebuilt; los endpoints se
+  descubren por probe + código del modulo (packages/core/src).
+- Login demo responde con token de admin@ever.co.
+- Para mapeo real: cada vacante en estado `cola` → contactType `LEAD`;
+  `enviada` → estado proposal; `respondida` → nota/estado + email-history.
