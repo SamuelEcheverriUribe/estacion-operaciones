@@ -19,7 +19,8 @@
 2. Nunca `curl | bash` ni scripts no revisados.
 3. Datos de clientes (HITL/Suiza) nunca al free-tier de modelos que entrenen con
    ellos; dentro de Copilot recordarlo como contexto.
-4. secreto regla: preferir leer credenciales de entorno, no hardcodear.
+4. Preferir leer credenciales de entorno (env vars o recomendaciones del
+   lanzador `griezz`), nunca hardcodear.
 
 ## Estilo de código
 - Python: PEP8, type hints cuando aporten, funciones cortas con propósito único.
