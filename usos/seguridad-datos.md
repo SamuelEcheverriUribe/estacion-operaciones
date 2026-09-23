@@ -65,13 +65,33 @@ script registra error y sale (no rompen nada).
 - `/mnt/safe` = LUKS (un solo dispositivo, cipher AES). Montaje bajo demanda;
   nunca montado en reposo. Los backups viven dentro de esa capa cifrada.
 
-## Para montar la capa 4 (segundo host, cuando haya cuenta)
+## Para montar la capa 4 (segundo host: Codeberg, recomendado)
 
-1. Crear cuenta/proyectos espejo en GitLab (o Gitea autoalojado / Codeberg).
-2. Por cada repo: `git push --mirror <url-gitlab>` desde el bare local:
+La página real de GitLab.com pide verificación con tarjeta y bloqueó la cuenta
+Samuel (23-sep) por su filtro anti-abuso de cuentas nuevas — descartado en la
+práctica para el mirror. **Codeberg** (Forgejo, Europa) es la vía sin fricción:
+sin tarjeta, sin bloqueos así.
+
+1. **Crear cuenta** en https://codeberg.org (sin tarjeta).
+2. **Generar token**: Codeberg → Settings → Applications → Generate Token,
+   scopes `read:user` + `write:repository`.
+3. **Rellenar** `~/.config/griezz/mirror-host2.env` (permisos 600, formato
+   ya creado): `HOST2_URL="https://codeberg.org"`, `HOST2_USER="<tu usuario>"`,
+   `HOST2_TOKEN="<token>"`, `HOST2_VISIBLE="false"` (repo privados).
+4. **Correr** el script: el mirror local (capa 2) ya se hizo, ahora la fase 2
+   crea los repos en Codeberg vía API y hace `git push --mirror` de los 9.
    ```bash
-   git -C /mnt/safe/github-backups/<repo>.git push --mirror https://gitlab.com/USER/<repo>.git
+   ~/.local/bin/griezz-github-mirror.sh
+   tail -20 ~/.local/share/griezz/github-mirror.log
    ```
-3. Opcional: añadir al script una fase de push a GitLab con la misma vara.
-   Recomendación: que la capa 4 corra SOLO cuando la capa 2 ya subió el mirror
-   local (no depender de red directa a GitHub).
+5. El timer diario (06:15) ya ejecuta fase 1 + fase 2 automáticamente.
+
+> Alternativas equivalentes si Codeberg no convence: Gitea/Forgejo autoalojado
+> (futuro servidor personal) o una instancia GitLab self-hosted. El mecanismo
+> es el mismo: `git push --mirror` desde el bare local.
+
+## Para montar la capa 5 (otro PC / disco físico)
+
+Cuando exista portátil u otro disco: duplicar `/mnt/safe/github-backups/`
+con el mismo script o un rsync, o añadir el segundo PC como destino restic
+(`restic -r ssh://...`). Objetivo: copia en 3 sitios físicos distintos.
