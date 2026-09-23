@@ -116,7 +116,23 @@ Capas:
 - **Estado honesto Copilot (verificado 23-sep)**: token gh sin scope `copilot`;
   `user/copilot` 404 → cuenta NO activa aún. Plan **Free** disponible; activar
   y queda afinado. Extensión `github.copilot-chat` ya instalada en VS Code.
-- Uso completo en `usos/estacion-editor.md`. Checklist de activación ahí.
+- Cómo usarlo en PC / tablet (Termux+code-server) / USB → `usos/estacion-editor.md`.
+  Checklist de activación ahí.
+
+## 5c. Godot en la tablet + repos + plantillas (nueva, 23-sep)
+
+- **Godot editor Android oficial**: existe (4.7.2 stable, APK en
+  godot-builds/releases ~656MB). Lenovo Tab M11 (arm64) lo corre. Solo GDScript,
+  sin exportar, render Compatibility para 2D. UI táctil NO optimizada → usar
+  ratón+teclado.
+- **Conexión a GitHub desde la tablet**: método A git+gh en Termux (flujo
+  remoto real) o método B Syncthing (ya activo). Ambos en la guía.
+- **Repo pieza-patrón "plantillas"**: se puede tener un repo template con
+  esqueletos de proyectos Godot para clonar desde GitHub ("create from
+  template") según el tipo de juego. Propuesta en `usos/godot-tablet-repos.md`.
+- **Estado repos verificado 23-sep**: `game-profiles` (privado) está VACÍO en
+  GitHub — el laboratorio Godot existe local y no está versionado aún.
+- Guía completa → `usos/godot-tablet-repos.md`.
 
 ## 6. Acuerdos de operación
 
@@ -129,4 +145,4 @@ Capas:
 
 ---
 
-*Creado 16-sep-2026 por GRIEZZ. Se amplía en docs/flujos/ e docs/infra/.*
+*Creado 16-sep-2026 por GRIEZZ. Se amplía en docs/flujos/, docs/infra/ y usos/.*
