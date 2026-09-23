@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "github.copilot",
+    "github.copilot-chat",
+    "github.vscode-github-actions",
+    "ms-python.python",
+    "ms-python.debugpy",
+    "esbenp.prettier-vscode",
+    "eamodio.gitlens",
+    "chickensoft.gdscript-vscode"
+  ],
+  "unwantedRecommendations": []
+}

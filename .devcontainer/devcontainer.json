@@ -1,0 +1,42 @@
+{
+  "name": "Estación de operaciones GRIEZZ",
+  "dockerComposeFile": null,
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.12"
+    },
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "22"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "github.copilot",
+        "github.copilot-chat",
+        "github.vscode-github-actions",
+        "ms-python.python",
+        "ms-python.debugpy",
+        "esbenp.prettier-vscode",
+        "eamodio.gitlens"
+      ],
+      "settings": {
+        "github.copilot.enable": {
+          "*": true,
+          "plaintext": true,
+          "markdown": true
+        },
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "editor.formatOnSave": true,
+        "git.autofetch": true
+      }
+    }
+  },
+  "postCreateCommand": "git config --global --add safe.directory /workspaces/estacion-operaciones && git config --global user.name 'Samuel Echeverri Uribe' && git config --global user.email 'samuel.echeverri@ikmail.com' && echo 'Estación GRIEZZ lista. GDScript/Godot se usa local o en USB, no on-demand en contenedor (render/GPU).'",
+  "remoteUser": "node",
+  "forwardPorts": [8080, 3000, 5432]
+}

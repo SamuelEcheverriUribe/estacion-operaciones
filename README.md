@@ -103,6 +103,21 @@ Capas:
 - **F6 · App móvil**: cliente móvil que entra por cuenta (primero versión web
   móvil, luego app nativa si el interés lo justifica).
 
+## 5b. GitHub como docker personal + IA de GitHub (nueva, 23-sep)
+
+- **Entorno reproducible versionado**: `.devcontainer/` (Node 22 + Python 3.12 +
+  Docker-in-Docker + VS Code con Copilot/Python/GitLens/Actions) + `.vscode/`
+  (extensiones y settings) + `.github/copilot/instructions.md` (Copilot
+  condicionado a la labor de Samuel: español/explicaciones, código en inglés,
+  reglas de seguridad, ecosistema opensource, estilo por lenguaje, contexto de
+  repos automatizaciones/freelance-pipeline/ghostink/Godot).
+- **Precedente USB**: este entorno es lo que viaja en la estación USB. Cualquier
+  PC: clonar → `gh auth` → "Reopen in Container" → misma estación.
+- **Estado honesto Copilot (verificado 23-sep)**: token gh sin scope `copilot`;
+  `user/copilot` 404 → cuenta NO activa aún. Plan **Free** disponible; activar
+  y queda afinado. Extensión `github.copilot-chat` ya instalada en VS Code.
+- Uso completo en `usos/estacion-editor.md`. Checklist de activación ahí.
+
 ## 6. Acuerdos de operación
 
 - Documentar antes de implementar (regla del usuario).
