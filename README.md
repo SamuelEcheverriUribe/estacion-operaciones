@@ -143,6 +143,32 @@ Capas:
   personal y local; GitHub solo para código (sin secretos: `.env` ignorados).
 - App móvil de prueba con datos ficticios hasta validar.
 
+## 7. Seguridad de datos — GitHub como base + mirror (nueva, 23-sep)
+
+Regla nueva del usuario: **la seguridad de los datos es lo primero**. GitHub es
+el servicio principal de guardado; todo repositorio tiene copia en otro sitio
+(mirror) desde el día 1.
+
+- **Capa 1 · GitHub (nube)**: fuente de verdad, versionada con historial.
+- **Capa 2 · Mirror local LUKS**: `/mnt/safe/github-backups/` (disco USB cifrado
+  con LUKS, 208GB libres) guarda los **9 repos en bare mirror** (`--mirror`: todo
+  el historial + ramas + tags). Script `griezz-github-mirror.sh` (actualiza o
+  crea), timer diario 06:15 (`griezz-github-mirror.timer`, con `Persistent=true`).
+- **Capa 3 · restic cifrado diario**: `griezz-restic-backup.sh` (04:00) respalda
+  `~/Trabajo`, `~/Vida`, `~/Proyectos`, `~/Documentos/GitHub`, la memoria GRIEZZ,
+  `.env` y el motor al repositorio restic `/mnt/safe/backups` (pass en archivo
+  600, nunca en el script — regla IRROMPIBLE). Retención: 7 diarios / 4 semanales.
+- **Capa 4 · segundo host en la nube (diseñada, pendiente de cuenta)**: mirror a
+  GitLab/Gitea cuando exista credencial → "otro sitio en la nube" del usuario.
+  Mismo patrón `git push --mirror` que la capa 2, otro remoto.
+- **Capa 5 · otro PC (futuro)**: cuando exista portátil/otra máquina, bare
+  mirror local ahí (o restic a su disco) cierra la copia en 3 sitios físicos.
+
+Inventario repos protegidos (verificado 23-sep): `estacion-operaciones`,
+`godot-templates`, `freelance-pipeline`, `ghostink`, `vanilla-os-griezz`,
+`game-profiles`, `dotfiles`, `ever-gauzy`, `automatizaciones`.
+Detalle → `usos/seguridad-datos.md`.
+
 ---
 
 *Creado 16-sep-2026 por GRIEZZ. Se amplía en docs/flujos/, docs/infra/ y usos/.*
